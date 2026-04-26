@@ -1,0 +1,186 @@
+<?php
+// index.php - Timetable Management System (FINAL NO CSS VERSION)
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Timetable Management System</title>
+
+<!-- ✅ CSS FILE LINK ADDED -->
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<h1>📅 Timetable Management System</h1>
+
+<form action="save_timetable.php" method="POST">
+
+<!-- COURSE -->
+<label>Course:</label><br>
+<select name="course" required>
+    <option value="">Select Course</option>
+    <option>BCA</option>
+    <option>BCA (AI & DS)</option>
+    <option>MCA</option>
+    <option>MCA (AI & DS)</option>
+    <option>B.Tech CSE</option>
+    <option>B.Tech (AI & ML)</option>
+    <option>M.Tech CSE</option>
+    <option>M.Tech (AI & ML)</option>
+</select>
+<br><br>
+
+<!-- DIVISION -->
+<label>Division:</label><br>
+<input type="text" name="division" maxlength="1" pattern="[A-Za-z]" placeholder="A" required>
+<br><br>
+
+<!-- DAY -->
+<label>Day:</label><br>
+<select name="day" required>
+    <option value="">Select Day</option>
+    <option>Monday</option>
+    <option>Tuesday</option>
+    <option>Wednesday</option>
+    <option>Thursday</option>
+    <option>Friday</option>
+</select>
+<br><br>
+
+<!-- TIME SLOT -->
+<label>Time Slot:</label><br>
+<select name="time_slot" required>
+    <option value="">Select Time</option>
+    <option>1st: 9:00 - 9:55</option>
+    <option>2nd: 9:55 - 10:50</option>
+    <option>Break: 10:50 - 11:30</option>
+    <option>3rd: 11:30 - 12:25</option>
+    <option>4th: 12:25 - 1:20</option>
+    <option>Break: 1:20 - 2:00</option>
+    <option>5th: 2:00 - 2:55</option>
+    <option>6th: 2:55 - 3:50</option>
+    <option>Break: 3:50 - 4:10</option>
+    <option>7th: 4:10 - 5:00</option>
+</select>
+<br><br>
+
+<!-- SUBJECT -->
+<label>Subject:</label><br>
+<input type="text" name="subject" required>
+<br><br>
+
+<!-- FACULTY TYPE -->
+<label>Faculty Type:</label><br>
+<select id="facultyType" name="faculty_type" onchange="filterFaculty()" required>
+    <option value="">Select Type</option>
+    <option value="hod_cse">HOD CSE</option>
+    <option value="hod_soc">HOD SOC</option>
+</select>
+<br><br>
+
+<!-- FACULTY -->
+<label>Faculty:</label><br>
+<select name="faculty" id="faculty" required onchange="showFacultyImg()">
+    <option value="">Select Faculty</option>
+</select>
+<br>
+<img id="facultyImg" src="img/default.png" width="120" height="120">
+<br><br>
+
+<!-- ROOM -->
+<label>Room / Lab / LT :</label><br>
+<select name="room" required>
+    <option value="">Select Room</option>
+
+    <optgroup label="Class Rooms (CR)" id="crRooms"></optgroup>
+    <optgroup label="NB Class Rooms" id="nbRooms"></optgroup>
+    <optgroup label="Lecture Theatres (LT)" id="ltRooms"></optgroup>
+    <optgroup label="Labs" id="labRooms"></optgroup>
+
+</select>
+<br><br>
+
+<input type="submit" value="Save Timetable">
+
+</form>
+
+<br>
+<a href="view_timetable.php">📄 View Timetable</a>
+
+<script>
+const facultyData = {
+    hod_cse: [
+        {name:"Dr. Manoj Chandra Lohani", img:"img2/Btg2tYqp-Dr-MC-Lohani.jpg"},
+        {name:"Mr. Ishwari Singh Rajput", img:"img2/ishwari-img-2.webp"},
+        {name:"Dr. Shubhro Chakrabartty", img:"img2/pawan-img-removebg-preview-1.png"},
+        {name:"Dr. Manoj Singh Adhikari", img:"img2/manoj-img-removebg-preview.png"}
+    ],
+    hod_soc: [
+        {name:"Mr. Kamlesh Padaliya", img:"img/kamlesh-img.webp"},
+        {name:"Ms. Sujata Negi", img:"img/sujata-img.webp"},
+        {name:"Mr. Gautam Kumar", img:"img/gautam-img-1.webp"}
+    ]
+};
+
+function filterFaculty(){
+    let type = document.getElementById("facultyType").value;
+    let select = document.getElementById("faculty");
+
+    select.innerHTML = "<option value=''>Select Faculty</option>";
+
+    if(facultyData[type]){
+        facultyData[type].forEach(f=>{
+            let opt = document.createElement("option");
+            opt.value = f.name;
+            opt.textContent = f.name;
+            opt.setAttribute("data-img", f.img);
+            select.appendChild(opt);
+        });
+    }
+
+    document.getElementById("facultyImg").src = "img/default.png";
+}
+
+function showFacultyImg(){
+    let select = document.getElementById("faculty");
+    let img = select.options[select.selectedIndex]?.getAttribute("data-img");
+    document.getElementById("facultyImg").src = img ? img : "img/default.png";
+}
+
+// ROOM SYSTEM
+let cr = "";
+for(let i=1;i<=18;i++){
+    cr += `<option value="CR${i}">CR${i}</option>`;
+}
+document.getElementById("crRooms").innerHTML = cr;
+
+
+const nb = [
+    "CR101","CR102","CR103","CR104",
+    "CR201","CR202","CR203","CR204",
+    "CR401","CR402","CR403","CR404",
+    "CR501","CR502"
+];
+
+let nbHTML = "";
+nb.forEach(r=>{
+    nbHTML += `<option value="${r}">${r}</option>`;
+});
+document.getElementById("nbRooms").innerHTML = nbHTML;
+let lt = "";
+for(let i=1;i<=4;i++){
+    lt += `<option value="LT${i}">LT${i}</option>`;
+}
+document.getElementById("ltRooms").innerHTML = lt;
+let lab = "";
+for(let i=1;i<=5;i++){
+    lab += `<option value="Lab ${i}">Lab ${i}</option>`;
+}
+document.getElementById("labRooms").innerHTML = lab;
+
+</script>
+
+</body>
+</html>
